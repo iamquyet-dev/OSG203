@@ -1,135 +1,203 @@
-# OSG  
-## Cơ chế đồng bộ I/O (I/O Synchronization)
+# OSG
+## Mô phỏng các cơ chế đồng bộ I/O
+
+### 1. Giới thiệu
+- Chương trình này mô phỏng các cơ chế đồng bộ trong hệ điều hành khi làm việc với I/O
+- Bao gồm:
+  + Mutex
+  + Semaphore
+  + Condition Variable
+- Mục tiêu:
+  + Hiểu cách các tiến trình đồng bộ khi truy cập tài nguyên dùng chung
+  + Tránh xung đột và đảm bảo tính đúng đắn của dữ liệu
 
 ---
 
-## Mutex (Mutual Exclusion)
+## MUTEX
 
 ### 1. Giới thiệu
-- Chương trình mô phỏng cơ chế **Mutex**
-- Nguyên tắc:  
-  + Chỉ **1 tiến trình** được truy cập tài nguyên I/O tại một thời điểm  
-- Dùng để tránh **race condition**
-- Là cơ chế **đồng bộ cơ bản nhất**
+- Mô phỏng cơ chế Mutex
+- Nguyên tắc:
+  + Chỉ một tiến trình được truy cập thiết bị I/O tại một thời điểm
+- Là cơ chế loại trừ lẫn nhau
 
 ### 2. Thuật toán
-- Tạo nhiều tiến trình (thread)
-- Khi tiến trình muốn truy cập I/O:
-  + Gọi `lock()` để chiếm quyền
-  + Nếu đã có tiến trình khác giữ lock → phải chờ
-- Sau khi hoàn thành:
-  + Gọi `unlock()` để giải phóng tài nguyên
+- Tạo mutex (Lock)
+- Tạo nhiều tiến trình (threads)
+- Mỗi tiến trình:
+  + Chờ I/O
+  + Khi vào vùng tới hạn:
+    - Khóa mutex
+    - Thực hiện I/O
+    - Mở khóa mutex
 
-### 3. Mô hình hoạt động
-```mermaid
-graph TD
-    P1 --> IO
-    P2 --> IO
-    P3 --> IO
-    IO[I/O Device - 1 slot]
-```
+### 3. Ví dụ chạy chương trình
 
-### 4. Đặc điểm
-- Đơn giản, dễ hiểu  
-- Đảm bảo an toàn tuyệt đối  
-- Có thể gây **tắc nghẽn (blocking)** nếu nhiều tiến trình chờ  
-
-### 5. Cách chạy chương trình
-- Chạy file Python:
-```bash
-python main.py
-```
+- Chạy:
+  ```
+  python io_sync.py
+  ```
 - Chọn:
-```text
-1
-```
+  ```
+  1
+  ```
+
+- Output:
+  ```
+  --- MÔ PHỎNG MUTEX ---
+  Process-1: Đang chờ thiết bị I/O...
+  Process-2: Đang chờ thiết bị I/O...
+  Process-3: Đang chờ thiết bị I/O...
+
+  Process-1: Đang sử dụng thiết bị I/O
+  Process-1: Hoàn thành I/O
+
+  Process-2: Đang sử dụng thiết bị I/O
+  Process-2: Hoàn thành I/O
+
+  Process-3: Đang sử dụng thiết bị I/O
+  Process-3: Hoàn thành I/O
+  ```
+
+### 4. Nhận xét
+- Các tiến trình chạy tuần tự
+- Không có 2 tiến trình nào chạy cùng lúc
 
 ---
 
-## Semaphore
+## SEMAPHORE
 
 ### 1. Giới thiệu
-- Chương trình mô phỏng **Semaphore**
-- Nguyên tắc:  
-  + Cho phép **n tiến trình** truy cập tài nguyên cùng lúc  
+- Mô phỏng Semaphore
+- Cho phép nhiều tiến trình sử dụng I/O nhưng có giới hạn (ở đây là 2)
 
 ### 2. Thuật toán
-- Khởi tạo semaphore với giá trị n
-- Khi tiến trình yêu cầu I/O:
-  + Giảm semaphore (`acquire`)
-  + Nếu = 0 → tiến trình phải chờ
-- Khi hoàn thành:
-  + Tăng semaphore (`release`)
+- Khởi tạo semaphore = 2
+- Mỗi tiến trình:
+  + Chờ quyền truy cập
+  + Khi có slot:
+    - Thực hiện I/O
+    - Giải phóng slot
 
-### 3. Mô hình hoạt động
-```mermaid
-graph TD
-    P1 --> IO
-    P2 --> IO
-    P3 --> IO
-    P4 --> WAIT
-    IO[I/O Device - 2 slots]
-    WAIT[Waiting Queue]
-```
+### 3. Ví dụ chạy chương trình
 
-### 4. Đặc điểm
-- Linh hoạt hơn Mutex  
-- Tối ưu hiệu suất  
+- Chọn:
+  ```
+  2
+  ```
 
-### 5. Cách chạy chương trình
-```bash
-python main.py
-```
-Chọn:
-```text
-2
-```
+- Output:
+  ```
+  --- MÔ PHỎNG SEMAPHORE ---
+  Process-1: Đang chờ cấp quyền I/O...
+  Process-2: Đang chờ cấp quyền I/O...
+  Process-3: Đang chờ cấp quyền I/O...
+  Process-4: Đang chờ cấp quyền I/O...
+  Process-5: Đang chờ cấp quyền I/O...
+
+  Process-1: Đang thực hiện I/O
+  Process-2: Đang thực hiện I/O
+
+  Process-1: Hoàn thành I/O
+  Process-3: Đang thực hiện I/O
+
+  Process-2: Hoàn thành I/O
+  Process-4: Đang thực hiện I/O
+
+  Process-3: Hoàn thành I/O
+  Process-5: Đang thực hiện I/O
+  ```
+
+### 4. Nhận xét
+- Có 2 tiến trình chạy song song
+- Các tiến trình còn lại phải chờ
 
 ---
 
-## Condition Variable / Monitor
+## CONDITION VARIABLE
 
 ### 1. Giới thiệu
-- Tiến trình **chờ đến khi điều kiện xảy ra**
-- Dùng trong bài toán Producer – Consumer  
+- Mô phỏng Condition Variable
+- Theo mô hình Producer - Consumer
 
 ### 2. Thuật toán
-- Producer:
-  + Tạo dữ liệu → đưa vào buffer
-  + `notify()`
+- Producer tạo dữ liệu
 - Consumer:
-  + Nếu rỗng → `wait()`
-  + Có dữ liệu → xử lý
+  + Nếu chưa có dữ liệu → wait()
+  + Khi có dữ liệu → xử lý
 
-### 3. Mô hình hoạt động
-```mermaid
-graph LR
-    Producer --> Buffer
-    Buffer --> Consumer
-    Consumer -->|wait if empty| Buffer
+### 3. Ví dụ chạy chương trình
+
+- Chọn:
+  ```
+  3
+  ```
+
+- Output:
+  ```
+  --- MÔ PHỎNG CONDITION VARIABLE ---
+  Process đang chờ dữ liệu...
+
+  Thiết bị I/O tạo dữ liệu: Data-1
+  Process xử lý dữ liệu: Data-1
+
+  Thiết bị I/O tạo dữ liệu: Data-2
+  Process xử lý dữ liệu: Data-2
+
+  Thiết bị I/O tạo dữ liệu: Data-3
+  Process xử lý dữ liệu: Data-3
+  ```
+
+### 4. Nhận xét
+- Consumer phải chờ dữ liệu
+- Khi có dữ liệu → được đánh thức và xử lý
+
+---
+
+## MENU CHƯƠNG TRÌNH
+
+### 1. Giao diện
 ```
-
-### 4. Đặc điểm
-- Đồng bộ theo điều kiện  
-- Tránh busy waiting  
-
-### 5. Cách chạy chương trình
-```bash
-python main.py
-```
-Chọn:
-```text
-3
+1. Mô phỏng Mutex
+2. Mô phỏng Semaphore
+3. Mô phỏng Condition Variable
+4. Mô phỏng tất cả
+0. Thoát
 ```
 
 ---
 
-## Tổng kết
+## 5. Cách chạy chương trình
 
-| Cơ chế | Số tiến trình | Ứng dụng |
-|------|--------|----------|
-| Mutex | 1 | Khóa tài nguyên |
-| Semaphore | n | Giới hạn truy cập |
-| Condition | n | Đồng bộ điều kiện |
+- Cài Python (>= 3.x)
+- Chạy:
+  ```
+  python io_sync.py
+  ```
+- Chọn chức năng mong muốn
 
-👉 Đây là nền tảng quan trọng trong hệ điều hành
+---
+
+## 6. Kết luận
+
+- Mutex:
+  + Đảm bảo chỉ 1 tiến trình truy cập tài nguyên
+- Semaphore:
+  + Cho phép nhiều tiến trình nhưng có giới hạn
+- Condition Variable:
+  + Đồng bộ theo điều kiện (chờ dữ liệu)
+
+→ Ba cơ chế này rất quan trọng trong hệ điều hành để:
+- Tránh race condition
+- Đồng bộ tiến trình
+- Tối ưu xử lý I/O
+
+---
+
+## 7. So sánh
+
+| Cơ chế | Số tiến trình | Đặc điểm |
+|-------|-------------|---------|
+| Mutex | 1 | Loại trừ hoàn toàn |
+| Semaphore | N | Giới hạn tài nguyên |
+| Condition | Phụ thuộc | Chờ điều kiện |
