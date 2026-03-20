@@ -193,11 +193,3 @@
 - Tối ưu xử lý I/O
 
 ---
-
-## 7. So sánh
-
-| Cơ chế | Số tiến trình | Đặc điểm |
-|-------|-------------|---------|
-| Mutex | 1 | Loại trừ hoàn toàn |
-| Semaphore | N | Giới hạn tài nguyên |
-| Condition | Phụ thuộc | Chờ điều kiện |
