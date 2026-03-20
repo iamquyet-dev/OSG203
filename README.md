@@ -12,8 +12,6 @@
 - Dùng để tránh **race condition**
 - Là cơ chế **đồng bộ cơ bản nhất**
 
----
-
 ### 2. Thuật toán
 - Tạo nhiều tiến trình (thread)
 - Khi tiến trình muốn truy cập I/O:
@@ -22,10 +20,7 @@
 - Sau khi hoàn thành:
   + Gọi `unlock()` để giải phóng tài nguyên
 
----
-
 ### 3. Mô hình hoạt động
-
 ```mermaid
 graph TD
     P1 --> IO
@@ -34,14 +29,10 @@ graph TD
     IO[I/O Device - 1 slot]
 ```
 
----
-
 ### 4. Đặc điểm
 - Đơn giản, dễ hiểu  
 - Đảm bảo an toàn tuyệt đối  
 - Có thể gây **tắc nghẽn (blocking)** nếu nhiều tiến trình chờ  
-
----
 
 ### 5. Cách chạy chương trình
 - Chạy file Python:
@@ -49,7 +40,7 @@ graph TD
 python main.py
 ```
 - Chọn:
-```
+```text
 1
 ```
 
@@ -62,8 +53,6 @@ python main.py
 - Nguyên tắc:  
   + Cho phép **n tiến trình** truy cập tài nguyên cùng lúc  
 
----
-
 ### 2. Thuật toán
 - Khởi tạo semaphore với giá trị n
 - Khi tiến trình yêu cầu I/O:
@@ -72,10 +61,7 @@ python main.py
 - Khi hoàn thành:
   + Tăng semaphore (`release`)
 
----
-
 ### 3. Mô hình hoạt động
-
 ```mermaid
 graph TD
     P1 --> IO
@@ -86,20 +72,16 @@ graph TD
     WAIT[Waiting Queue]
 ```
 
----
-
 ### 4. Đặc điểm
 - Linh hoạt hơn Mutex  
 - Tối ưu hiệu suất  
-
----
 
 ### 5. Cách chạy chương trình
 ```bash
 python main.py
 ```
 Chọn:
-```
+```text
 2
 ```
 
@@ -111,8 +93,6 @@ Chọn:
 - Tiến trình **chờ đến khi điều kiện xảy ra**
 - Dùng trong bài toán Producer – Consumer  
 
----
-
 ### 2. Thuật toán
 - Producer:
   + Tạo dữ liệu → đưa vào buffer
@@ -121,10 +101,7 @@ Chọn:
   + Nếu rỗng → `wait()`
   + Có dữ liệu → xử lý
 
----
-
 ### 3. Mô hình hoạt động
-
 ```mermaid
 graph LR
     Producer --> Buffer
@@ -132,22 +109,27 @@ graph LR
     Consumer -->|wait if empty| Buffer
 ```
 
----
-
 ### 4. Đặc điểm
 - Đồng bộ theo điều kiện  
 - Tránh busy waiting  
-
----
 
 ### 5. Cách chạy chương trình
 ```bash
 python main.py
 ```
 Chọn:
-```
+```text
 3
 ```
 
 ---
 
+## Tổng kết
+
+| Cơ chế | Số tiến trình | Ứng dụng |
+|------|--------|----------|
+| Mutex | 1 | Khóa tài nguyên |
+| Semaphore | n | Giới hạn truy cập |
+| Condition | n | Đồng bộ điều kiện |
+
+👉 Đây là nền tảng quan trọng trong hệ điều hành
