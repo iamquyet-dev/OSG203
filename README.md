@@ -151,12 +151,3 @@ Chọn:
 
 ---
 
-## Tổng kết
-
-| Cơ chế | Số tiến trình | Ứng dụng |
-|------|--------|----------|
-Mutex | 1 | Khóa tài nguyên |
-Semaphore | n | Giới hạn truy cập |
-Condition | n | Đồng bộ điều kiện |
-
-👉 Đây là nền tảng quan trọng trong hệ điều hành
