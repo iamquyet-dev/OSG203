@@ -2,11 +2,6 @@ import threading
 import time
 import random
 
-# =========================================
-# MÔ PHỎNG CÁC CƠ CHẾ ĐỒNG BỘ I/O
-# Nguyễn Đình Quyết
-# =========================================
-
 def showTitle():
     print("\n" + "=" * 60)
     print("      MÔ PHỎNG CÁC CƠ CHẾ ĐỒNG BỘ I/O")
@@ -14,9 +9,7 @@ def showTitle():
     print("=" * 60)
 
 
-# =================================================
 # MUTEX
-# =================================================
 def simulateMutex():
     print("\n--- MÔ PHỎNG MUTEX ---")
     print("Chỉ 1 tiến trình được truy cập thiết bị I/O tại một thời điểm.\n")
@@ -40,10 +33,7 @@ def simulateMutex():
     for t in threads:
         t.join()
 
-
-# =================================================
 # SEMAPHORE
-# =================================================
 def simulateSemaphore():
     print("\n--- MÔ PHỎNG SEMAPHORE ---")
     print("Cho phép tối đa 2 tiến trình sử dụng I/O cùng lúc.\n")
@@ -67,10 +57,7 @@ def simulateSemaphore():
     for t in threads:
         t.join()
 
-
-# =================================================
 # CONDITION VARIABLE / MONITOR
-# =================================================
 def simulateConditionVariable():
     print("\n--- MÔ PHỎNG CONDITION VARIABLE ---")
     print("Tiến trình phải chờ đến khi có dữ liệu từ thiết bị I/O.\n")
@@ -106,10 +93,7 @@ def simulateConditionVariable():
     t1.join()
     t2.join()
 
-
-# =================================================
 # MENU
-# =================================================
 def showMenu():
 
     while True:
